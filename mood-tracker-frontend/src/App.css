@@ -967,6 +967,59 @@
     line-height: 1;
   }
 
+  /* ── CSS notebook icon (Journal) ── */
+  .nav-icon-journal {
+    display: flex;
+    align-items: stretch;
+    width: 18px;
+    height: 20px;
+    border: 2px solid currentColor;
+    border-radius: 1px 2px 2px 1px;
+    overflow: hidden;
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  .nav-icon-journal-spine {
+    width: 4px;
+    background: currentColor;
+    opacity: 0.35;
+    flex-shrink: 0;
+  }
+
+  .nav-icon-journal-lines {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    flex: 1;
+    padding: 2px 2px;
+  }
+
+  .nav-icon-journal-lines span {
+    display: block;
+    height: 1.5px;
+    background: currentColor;
+    border-radius: 1px;
+    opacity: 0.7;
+  }
+
+  /* ── CSS bar chart icon (Summary) ── */
+  .nav-icon-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 2px;
+    width: 18px;
+    height: 20px;
+    flex-shrink: 0;
+  }
+
+  .nav-icon-bar {
+    flex: 1;
+    background: currentColor;
+    border-radius: 1px 1px 0 0;
+    border: 1.5px solid currentColor;
+  }
+
   .sidebar-divider {
     height: 2px;
     background: var(--ink);

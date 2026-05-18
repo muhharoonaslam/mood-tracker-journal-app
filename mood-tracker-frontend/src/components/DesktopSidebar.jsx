@@ -13,14 +13,24 @@ export default function DesktopSidebar({ view, setView, user, logout, onOpenLogM
           className={`sidebar-nav-item${view === 'timeline' ? ' active' : ''}`}
           onClick={() => setView('timeline')}
         >
-          <span className="sidebar-nav-icon" aria-hidden="true">📔</span>
+          <span className="nav-icon-journal" aria-hidden="true">
+            <span className="nav-icon-journal-spine" />
+            <span className="nav-icon-journal-lines">
+              <span /><span /><span />
+            </span>
+          </span>
           Journal
         </button>
         <button
           className={`sidebar-nav-item${view === 'summary' ? ' active' : ''}`}
           onClick={() => setView('summary')}
         >
-          <span className="sidebar-nav-icon" aria-hidden="true">📊</span>
+          <span className="nav-icon-chart" aria-hidden="true">
+            <span className="nav-icon-bar" style={{ height: 8 }} />
+            <span className="nav-icon-bar" style={{ height: 14 }} />
+            <span className="nav-icon-bar" style={{ height: 10 }} />
+            <span className="nav-icon-bar" style={{ height: 18 }} />
+          </span>
           Summary
         </button>
       </nav>
