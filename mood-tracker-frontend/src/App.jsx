@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useAuth } from './hooks/useAuth'
 import { useMoods } from './hooks/useMoods'
 import LoginForm from './components/LoginForm'
@@ -9,7 +9,19 @@ import StreakCard from './components/StreakCard'
 import ReflectionsTrend from './components/ReflectionsTrend'
 import SummaryView from './components/SummaryView'
 import BottomNav from './components/BottomNav'
+import DesktopSidebar from './components/DesktopSidebar'
 import './App.css'
+
+function useIsDesktop() {
+  const [isDesktop, setIsDesktop] = useState(() => window.innerWidth >= 768)
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 768px)')
+    const handler = (e) => setIsDesktop(e.matches)
+    mq.addEventListener('change', handler)
+    return () => mq.removeEventListener('change', handler)
+  }, [])
+  return isDesktop
+}
 
 export default function App() {
   const { user, token, login, register, logout, isAuthenticated } = useAuth()
@@ -19,6 +31,7 @@ export default function App() {
   const [authError, setAuthError] = useState(null)
   const [view, setView] = useState('timeline') // 'timeline' | 'log' | 'summary'
   const [activeEntryId, setActiveEntryId] = useState(null)
+  const isDesktop = useIsDesktop()
 
   useEffect(() => {
     if (isAuthenticated && token) {
@@ -69,7 +82,7 @@ export default function App() {
   async function handleMoodSubmit(moodType, note) {
     await submitMood(token, moodType, note)
     await fetchEntries(token)
-    setView('timeline')
+    if (!isDesktop) setView('timeline')
   }
 
   if (!isAuthenticated) {
@@ -88,62 +101,98 @@ export default function App() {
     )
   }
 
+  const timelineContent = (
+    <div className="timeline-view">
+      <h2 className="section-title">Recent Entries</h2>
+      <div className="section-underline" />
+      {isDesktop ? (
+        /* Desktop: entries grid + right-column widgets */
+        <div className="desktop-main-grid">
+          <MoodTimeline
+            entries={entries}
+            loading={loading}
+            activeEntryId={activeEntryId}
+            onEntryClick={(id) => setActiveEntryId(prev => prev === id ? null : id)}
+          />
+          <div className="desktop-widgets">
+            <ReflectionsTrend entries={entries} />
+            <StreakCard entries={entries} />
+          </div>
+        </div>
+      ) : (
+        /* Mobile: stacked */
+        <>
+          <MoodTimeline
+            entries={entries}
+            loading={loading}
+            activeEntryId={activeEntryId}
+            onEntryClick={(id) => setActiveEntryId(prev => prev === id ? null : id)}
+          />
+          <ReflectionsTrend entries={entries} />
+          <StreakCard entries={entries} />
+        </>
+      )}
+    </div>
+  )
+
   return (
     <div className="app-shell">
       <header className="app-header">
         <span className="app-header-title">My Journal</span>
         <div className="app-header-icons">
-          {user?.email && (
+          {user?.email && !isDesktop && (
             <span className="app-header-email">{user.email}</span>
           )}
-          <button type="button" className="app-logout-btn" onClick={logout}>
-            Sign Out
-          </button>
+          {!isDesktop && (
+            <button type="button" className="app-logout-btn" onClick={logout}>
+              Sign Out
+            </button>
+          )}
         </div>
       </header>
 
+      {/* Desktop sidebar — hidden on mobile via CSS */}
+      {isDesktop && (
+        <DesktopSidebar
+          view={view}
+          setView={setView}
+          user={user}
+          logout={logout}
+          onMoodSubmit={handleMoodSubmit}
+          submitting={submitting}
+          error={error}
+        />
+      )}
+
       <main className="app-content">
-        {view === 'timeline' && (
-          <div className="timeline-view">
-            <h2 className="section-title">Recent Entries</h2>
-            <div className="section-underline" />
-            <MoodTimeline
-              entries={entries}
-              loading={loading}
-              activeEntryId={activeEntryId}
-              onEntryClick={(id) => setActiveEntryId(prev => prev === id ? null : id)}
-            />
-            <ReflectionsTrend entries={entries} />
-            <StreakCard entries={entries} />
-          </div>
-        )}
-
-        {view === 'log' && (
-          <MoodForm
-            onSubmit={handleMoodSubmit}
-            submitting={submitting}
-            error={error}
-            onBack={() => setView('timeline')}
-          />
-        )}
-
-        {view === 'summary' && (
-          <SummaryView entries={entries} />
+        {/* Desktop always shows timeline or summary (form is in sidebar) */}
+        {isDesktop ? (
+          view === 'summary'
+            ? <SummaryView entries={entries} />
+            : timelineContent
+        ) : (
+          <>
+            {view === 'timeline' && timelineContent}
+            {view === 'log' && (
+              <MoodForm
+                onSubmit={handleMoodSubmit}
+                submitting={submitting}
+                error={error}
+                onBack={() => setView('timeline')}
+              />
+            )}
+            {view === 'summary' && <SummaryView entries={entries} />}
+          </>
         )}
       </main>
 
-      {/* FAB — only on timeline view */}
-      {view === 'timeline' && (
-        <button
-          className="fab"
-          aria-label="Log new mood"
-          onClick={() => setView('log')}
-        >
+      {/* Mobile-only: FAB + bottom nav */}
+      {!isDesktop && view === 'timeline' && (
+        <button className="fab" aria-label="Log new mood" onClick={() => setView('log')}>
           +
         </button>
       )}
-
-      <BottomNav view={view} setView={setView} />
+      {!isDesktop && <BottomNav view={view} setView={setView} />}
     </div>
   )
 }
