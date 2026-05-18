@@ -108,14 +108,22 @@ export default function SummaryView({ entries }) {
             <span>Tally</span>
           </div>
           {ledgerRows.map(({ date, moods }) => {
-            // Show the most frequent mood for that day
-            const freq = {}
-            moods.forEach((m) => { freq[m] = (freq[m] || 0) + 1 })
-            const dominantMood = Object.entries(freq).sort((a, b) => b[1] - a[1])[0][0]
+            // Unique moods logged that day, in fixed order
+            const uniqueMoods = ['Happy', 'Neutral', 'Sad'].filter((m) => moods.includes(m))
             return (
               <div className="ledger-row" key={date}>
                 <span>{formatLedgerDate(date)}</span>
-                <span style={{ color: MOOD_COLORS[dominantMood] }}>{dominantMood}</span>
+                <span className="ledger-moods">
+                  {uniqueMoods.map((m) => (
+                    <span
+                      key={m}
+                      className="ledger-mood-chip"
+                      style={{ color: MOOD_COLORS[m], borderColor: MOOD_COLORS[m] }}
+                    >
+                      {m}
+                    </span>
+                  ))}
+                </span>
                 <span className="ledger-tally">
                   <TallyMarks count={moods.length} height={20} />
                 </span>

@@ -781,6 +781,22 @@
   word-break: break-all;
 }
 
+.ledger-moods {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.ledger-mood-chip {
+  font-family: var(--font-hand);
+  font-size: 12px;
+  padding: 2px 7px;
+  border: 1.5px solid;
+  border-radius: 3px;
+  background: transparent;
+  white-space: nowrap;
+}
+
 /* ---------- Error / Loading ---------- */
 
 .error-msg {
