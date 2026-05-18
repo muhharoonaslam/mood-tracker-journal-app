@@ -1,22 +1,8 @@
 import React from 'react'
 import MoodCanvasFace from './MoodCanvasFace'
+import TallyMarks from './TallyMarks'
 
 const MOOD_COLORS = { Happy: '#E8913A', Neutral: '#7A8B69', Sad: '#6B8CAE' }
-
-/**
- * Tally marks grouped in fives.
- * 7 → "|||| ||"   5 → "||||"   3 → "|||"
- * The fifth stroke uses a unicode combining strikethrough so it reads
- * as a crossed bundle of four — no images or icon fonts needed.
- */
-function makeTally(n) {
-  if (n === 0) return '—'
-  const groups = Math.floor(n / 5)
-  const rem = n % 5
-  // ̶ is combining long stroke overlay (strikethrough)
-  const bundle = '|̶|̶|̶|̶|̶'
-  return (bundle + ' ').repeat(groups) + '|'.repeat(rem)
-}
 
 function formatLedgerDate(utcString) {
   if (!utcString) return ''
@@ -101,7 +87,9 @@ export default function SummaryView({ entries }) {
             >
               {mood}
             </div>
-            <div className="tally-marks">{makeTally(moodCounts[mood])}</div>
+            <div className="tally-marks">
+              <TallyMarks count={moodCounts[mood]} color={MOOD_COLORS[mood]} height={24} />
+            </div>
             <div className="tally-count">{moodCounts[mood]}</div>
           </div>
         ))}
@@ -128,7 +116,9 @@ export default function SummaryView({ entries }) {
               <div className="ledger-row" key={date}>
                 <span>{formatLedgerDate(date)}</span>
                 <span style={{ color: MOOD_COLORS[dominantMood] }}>{dominantMood}</span>
-                <span className="ledger-tally">{makeTally(moods.length)}</span>
+                <span className="ledger-tally">
+                  <TallyMarks count={moods.length} height={20} />
+                </span>
               </div>
             )
           })}
