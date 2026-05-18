@@ -1,12 +1,24 @@
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --surface: #fcf9f1;
+  --aged-paper: #F0EAD6;
+  --ink: #1A1A1A;
+  --terracotta: #E9A390;
+  --graphite: #7A7567;
+  --error-red: #D32F2F;
+  --font-sketch: 'Cabin Sketch', cursive;
+  --font-hand: 'Architects Daughter', cursive;
+  --radius: 3px 5px 2px 4px;
+  --shadow: 4px 4px 0px #1A1A1A;
+  --shadow-sm: 2px 2px 0px #1A1A1A;
 }
 
 body {
-  background-color: #F5F0E8;
-  color: #2C1810;
-  font-family: 'Lato', sans-serif;
+  background-color: var(--surface);
+  background-image: radial-gradient(circle, rgba(122,117,103,0.35) 1px, transparent 1px);
+  background-size: 20px 20px;
+  color: var(--ink);
+  font-family: var(--font-hand);
   min-height: 100vh;
 }

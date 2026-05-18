@@ -1,18 +1,13 @@
 import React from 'react'
 
 /**
- * Animated loading indicator matching the Paper & Ink theme.
+ * Handwritten-style loading indicator.
  * @param {{ text?: string }} props
  */
 export default function LoadingState({ text = 'Loading' }) {
   return (
-    <div className="loading-state" aria-live="polite" aria-label={text}>
-      <span>{text}</span>
-      <span className="loading-dots" aria-hidden="true">
-        <span />
-        <span />
-        <span />
-      </span>
-    </div>
+    <p className="loading-txt" aria-live="polite">
+      {text}...
+    </p>
   )
 }
