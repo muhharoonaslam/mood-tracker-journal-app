@@ -1,132 +1,125 @@
 import React, { useRef, useEffect } from 'react'
 
 const DAY_LABELS = ['M', 'T', 'W', 'T', 'F', 'S', 'S']
-// Monday = 0 ... Sunday = 6 (mapped from JS getDay() where 0=Sun)
+
 function jsDayToIndex(jsDay) {
-  // JS: 0=Sun, 1=Mon ... 6=Sat
-  // We want: 0=Mon ... 6=Sun
   return jsDay === 0 ? 6 : jsDay - 1
 }
 
-/**
- * Canvas bar chart showing entry count per day of the week.
- * Current weekday bar is terracotta; others are ink-black.
- * @param {{ entries: object[] }} props
- */
+function draw(canvas, entries) {
+  const ctx = canvas.getContext('2d')
+  const dpr = window.devicePixelRatio || 1
+  const W = canvas.clientWidth
+  const H = 160
+
+  if (W <= 0) return
+
+  canvas.width = W * dpr
+  canvas.height = H * dpr
+  canvas.style.height = `${H}px`
+  ctx.scale(dpr, dpr)
+  ctx.clearRect(0, 0, W, H)
+
+  // Count entries per weekday
+  const counts = [0, 0, 0, 0, 0, 0, 0]
+  if (entries && entries.length > 0) {
+    entries.forEach((e) => {
+      if (!e.timestampUtc) return
+      counts[jsDayToIndex(new Date(e.timestampUtc).getDay())]++
+    })
+  }
+
+  const maxCount = Math.max(...counts, 1)
+  const todayIdx = jsDayToIndex(new Date().getDay())
+
+  const PAD_L = 8
+  const PAD_R = 8
+  const PAD_TOP = 8
+  const LABEL_H = 20
+  const chartH = H - PAD_TOP - LABEL_H
+  const slotW = (W - PAD_L - PAD_R) / 7
+  const barW = Math.max(8, slotW * 0.55)
+
+  const INK = '#1A1A1A'
+  const TERRA = '#E9A390'
+  const GRID = 'rgba(122,117,103,0.3)'
+
+  // Grid lines
+  ctx.strokeStyle = GRID
+  ctx.lineWidth = 1
+  for (let g = 1; g <= 4; g++) {
+    const y = PAD_TOP + chartH - (chartH * g) / 4
+    ctx.beginPath()
+    ctx.moveTo(PAD_L, y)
+    ctx.lineTo(W - PAD_R, y)
+    ctx.stroke()
+  }
+
+  // Bars
+  for (let i = 0; i < 7; i++) {
+    const isToday = i === todayIdx
+    const color = isToday ? TERRA : INK
+    const barH = counts[i] === 0
+      ? 3
+      : Math.max(8, (counts[i] / maxCount) * (chartH - 4))
+
+    const slotX = PAD_L + i * slotW
+    const x = slotX + (slotW - barW) / 2
+    const y = PAD_TOP + chartH - barH
+
+    // Shadow (drawn first, behind the bar)
+    if (counts[i] > 0) {
+      ctx.fillStyle = 'rgba(0,0,0,0.22)'
+      ctx.fillRect(x + 3, y + 3, barW, barH)
+    }
+
+    // Bar fill
+    ctx.fillStyle = color
+    ctx.fillRect(x, y, barW, barH)
+
+    // Bar border
+    ctx.strokeStyle = INK
+    ctx.lineWidth = 1.5
+    ctx.strokeRect(x, y, barW, barH)
+
+    // Day label
+    ctx.fillStyle = isToday ? TERRA : INK
+    ctx.font = `12px 'Architects Daughter', cursive`
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'top'
+    ctx.fillText(DAY_LABELS[i], x + barW / 2, PAD_TOP + chartH + 4)
+  }
+}
+
 export default function ReflectionsTrend({ entries }) {
   const canvasRef = useRef(null)
+  const wrapperRef = useRef(null)
 
   useEffect(() => {
     const canvas = canvasRef.current
-    if (!canvas) return
-    const ctx = canvas.getContext('2d')
-    const dpr = window.devicePixelRatio || 1
+    const wrapper = wrapperRef.current
+    if (!canvas || !wrapper) return
 
-    const W = canvas.offsetWidth || 300
-    const H = 140
+    // Draw once immediately (may be 0-width; observer will re-draw)
+    draw(canvas, entries)
 
-    canvas.width = W * dpr
-    canvas.height = H * dpr
-    canvas.style.width = `${W}px`
-    canvas.style.height = `${H}px`
-    ctx.scale(dpr, dpr)
-
-    ctx.clearRect(0, 0, W, H)
-
-    // Count entries per weekday (Mon=0 ... Sun=6)
-    const counts = [0, 0, 0, 0, 0, 0, 0]
-    if (entries && entries.length > 0) {
-      entries.forEach((e) => {
-        if (!e.timestampUtc) return
-        const d = new Date(e.timestampUtc)
-        const idx = jsDayToIndex(d.getDay())
-        counts[idx]++
-      })
-    }
-
-    const maxCount = Math.max(...counts, 1)
-    const todayIdx = jsDayToIndex(new Date().getDay())
-
-    const padLeft = 12
-    const padRight = 12
-    const padTop = 12
-    const labelH = 24
-    const chartH = H - padTop - labelH
-    const barAreaW = W - padLeft - padRight
-    const barW = Math.floor(barAreaW / 7) - 4
-    const barGap = Math.floor(barAreaW / 7)
-
-    const inkColor = '#1A1A1A'
-    const terracotta = '#E9A390'
-    const graphite = 'rgba(122,117,103,0.5)'
-
-    // Draw subtle horizontal grid lines
-    ctx.strokeStyle = graphite
-    ctx.lineWidth = 0.5
-    const gridLines = 4
-    for (let g = 0; g <= gridLines; g++) {
-      const y = padTop + (chartH * g) / gridLines
-      ctx.beginPath()
-      ctx.moveTo(padLeft, y)
-      ctx.lineTo(W - padRight, y)
-      ctx.stroke()
-    }
-
-    // Draw bars
-    for (let i = 0; i < 7; i++) {
-      const barH = counts[i] === 0
-        ? 4
-        : Math.max(6, (counts[i] / maxCount) * (chartH - 8))
-      const x = padLeft + i * barGap + (barGap - barW) / 2
-      const y = padTop + chartH - barH
-
-      ctx.fillStyle = i === todayIdx ? terracotta : inkColor
-
-      // Slightly wobbly bar top (hand-drawn feel)
-      ctx.beginPath()
-      ctx.moveTo(x, y + 3)
-      ctx.lineTo(x + barW * 0.3, y)
-      ctx.lineTo(x + barW * 0.7, y + 2)
-      ctx.lineTo(x + barW, y + 1)
-      ctx.lineTo(x + barW, padTop + chartH)
-      ctx.lineTo(x, padTop + chartH)
-      ctx.closePath()
-      ctx.fill()
-
-      // Outline
-      ctx.strokeStyle = inkColor
-      ctx.lineWidth = 1.5
-      ctx.strokeRect(x, y, barW, barH)
-
-      // Hard shadow (only for non-zero)
-      if (counts[i] > 0) {
-        ctx.fillStyle = 'rgba(0,0,0,0.25)'
-        ctx.fillRect(x + 3, y + 3, barW, barH)
-        // Redraw bar on top
-        ctx.fillStyle = i === todayIdx ? terracotta : inkColor
-        ctx.fillRect(x, y, barW, barH)
-        ctx.strokeStyle = inkColor
-        ctx.lineWidth = 1.5
-        ctx.strokeRect(x, y, barW, barH)
-      }
-
-      // Day label
-      ctx.fillStyle = i === todayIdx ? terracotta : inkColor
-      ctx.font = `bold 11px 'Architects Daughter', cursive`
-      ctx.textAlign = 'center'
-      ctx.fillText(DAY_LABELS[i], x + barW / 2, padTop + chartH + labelH - 6)
-    }
+    // Re-draw whenever the container resizes
+    const ro = new ResizeObserver(() => draw(canvas, entries))
+    ro.observe(wrapper)
+    return () => ro.disconnect()
   }, [entries])
 
   return (
     <div className="trend-card">
       <div className="trend-title">Reflections This Week</div>
-      <canvas
-        ref={canvasRef}
-        style={{ width: '100%', display: 'block' }}
-        aria-label="Bar chart showing mood entries per day of the week"
-        role="img"
-      />
+      <div ref={wrapperRef} style={{ width: '100%' }}>
+        <canvas
+          ref={canvasRef}
+          style={{ width: '100%', display: 'block' }}
+          aria-label="Bar chart showing mood entries per day of the week"
+          role="img"
+        />
+      </div>
     </div>
   )
 }
