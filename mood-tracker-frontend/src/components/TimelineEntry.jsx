@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useCallback } from 'react'
 import MoodCanvasFace from './MoodCanvasFace'
 
 function formatCardDate(utcString) {
@@ -13,31 +13,28 @@ function formatCardDate(utcString) {
   }
 }
 
-/**
- * A single journal card in the mood timeline.
- * @param {{
- *   entry: { id: string|number, moodType: string, timestampUtc: string, note: string },
- *   index: number,
- *   isActive: boolean,
- *   onClick: (id: string|number) => void
- * }} props
- */
 export default function TimelineEntry({ entry, index = 0, isActive, onClick }) {
   const { id, moodType, timestampUtc, note } = entry
   const mood = moodType || 'Neutral'
+  const [pulsing, setPulsing] = useState(false)
 
-  // Alternate slight rotation: even = tilt left, odd = tilt right
   const rotation = index % 2 === 0 ? '-0.5deg' : '0.5deg'
+  const moodClass = `mood-${mood.toLowerCase()}`
 
-  function handleClick() {
+  const handleClick = useCallback(() => {
     if (onClick) onClick(id)
-  }
+    setPulsing(false)
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => setPulsing(true))
+    })
+  }, [id, onClick])
 
   return (
     <article
-      className="timeline-card"
+      className={`timeline-card ${moodClass} ${pulsing ? 'entry-pulse' : ''}`}
       style={{ transform: `rotate(${rotation})` }}
       onClick={handleClick}
+      onAnimationEnd={() => setPulsing(false)}
       role="button"
       tabIndex={0}
       aria-pressed={isActive}

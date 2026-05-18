@@ -18,6 +18,7 @@ export default function App() {
   const [showRegister, setShowRegister] = useState(false)
   const [authError, setAuthError] = useState(null)
   const [view, setView] = useState('timeline') // 'timeline' | 'log' | 'summary'
+  const [activeEntryId, setActiveEntryId] = useState(null)
 
   useEffect(() => {
     if (isAuthenticated && token) {
@@ -106,7 +107,12 @@ export default function App() {
           <div className="timeline-view">
             <h2 className="section-title">Recent Entries</h2>
             <div className="section-underline" />
-            <MoodTimeline entries={entries} loading={loading} />
+            <MoodTimeline
+              entries={entries}
+              loading={loading}
+              activeEntryId={activeEntryId}
+              onEntryClick={(id) => setActiveEntryId(prev => prev === id ? null : id)}
+            />
             <ReflectionsTrend entries={entries} />
             <StreakCard entries={entries} />
           </div>
