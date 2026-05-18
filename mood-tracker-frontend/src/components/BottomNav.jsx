@@ -1,9 +1,5 @@
 import React from 'react'
 
-/**
- * Fixed bottom navigation bar.
- * @param {{ view: string, setView: (view: string) => void }} props
- */
 export default function BottomNav({ view, setView }) {
   return (
     <nav className="bottom-nav" aria-label="Main navigation">
@@ -13,7 +9,12 @@ export default function BottomNav({ view, setView }) {
         aria-label="Journal"
         aria-current={view === 'timeline' ? 'page' : undefined}
       >
-        <span className="nav-item-icon" aria-hidden="true">📔</span>
+        <span className="nav-icon-journal" aria-hidden="true">
+          <span className="nav-icon-journal-spine" />
+          <span className="nav-icon-journal-lines">
+            <span /><span /><span />
+          </span>
+        </span>
         <span>Journal</span>
       </button>
 
@@ -23,7 +24,10 @@ export default function BottomNav({ view, setView }) {
         aria-label="Log mood"
         aria-current={view === 'log' ? 'page' : undefined}
       >
-        <span className="nav-item-icon" aria-hidden="true">✏</span>
+        <span className="nav-icon-pen" aria-hidden="true">
+          <span className="nav-icon-pen-body" />
+          <span className="nav-icon-pen-tip" />
+        </span>
         <span>Log</span>
       </button>
 
@@ -33,7 +37,12 @@ export default function BottomNav({ view, setView }) {
         aria-label="Summary"
         aria-current={view === 'summary' ? 'page' : undefined}
       >
-        <span className="nav-item-icon" aria-hidden="true">📊</span>
+        <span className="nav-icon-chart" aria-hidden="true">
+          <span className="nav-icon-bar" style={{ height: 8 }} />
+          <span className="nav-icon-bar" style={{ height: 14 }} />
+          <span className="nav-icon-bar" style={{ height: 10 }} />
+          <span className="nav-icon-bar" style={{ height: 18 }} />
+        </span>
         <span>Summary</span>
       </button>
     </nav>
