@@ -727,6 +727,7 @@
   word-break: break-all;
   line-height: 1.6;
   min-height: 32px;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
