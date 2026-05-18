@@ -294,26 +294,72 @@
   margin-bottom: 24px;
 }
 
+/* Timeline — horizontally scrollable, snap per card */
 .timeline-cards {
   display: flex;
-  flex-direction: column;
-  gap: 0;
+  flex-direction: row;
+  gap: 16px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  padding: 8px 4px 16px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--ink) var(--aged-paper);
+}
+
+.timeline-cards::-webkit-scrollbar { height: 6px; }
+.timeline-cards::-webkit-scrollbar-track { background: var(--aged-paper); }
+.timeline-cards::-webkit-scrollbar-thumb { background: var(--ink); border-radius: 3px; }
+
+/* On wider screens reflow to a multi-column grid */
+@media (min-width: 768px) {
+  .timeline-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    overflow-x: visible;
+    scroll-snap-type: none;
+    padding: 0;
+  }
 }
 
 .timeline-card {
   background: var(--aged-paper);
   border: 2px solid var(--ink);
+  border-top-width: 5px; /* mood color accent overrides this */
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   padding: 16px;
-  margin-bottom: 16px;
+  min-width: 200px;
+  max-width: 240px;
+  flex-shrink: 0;
+  scroll-snap-align: start;
   cursor: pointer;
   transition: box-shadow 0.1s, transform 0.1s;
 }
 
+@media (min-width: 768px) {
+  .timeline-card { min-width: unset; max-width: unset; flex-shrink: unset; }
+}
+
 .timeline-card:active {
-  transform: translate(2px, 2px);
   box-shadow: none;
+}
+
+/* Mood color accents — top border + shadow tint */
+.timeline-card.mood-happy  { border-top-color: #E8913A; box-shadow: 4px 4px 0px #E8913A; }
+.timeline-card.mood-neutral{ border-top-color: #7A8B69; box-shadow: 4px 4px 0px #7A8B69; }
+.timeline-card.mood-sad    { border-top-color: #6B8CAE; box-shadow: 4px 4px 0px #6B8CAE; }
+
+/* Click pulse animation */
+.timeline-card.entry-pulse {
+  animation: entryPulse 0.4s ease-out;
+}
+
+@keyframes entryPulse {
+  0%   { transform: scale(1); }
+  35%  { transform: scale(1.07) rotate(0deg); }
+  70%  { transform: scale(0.97); }
+  100% { transform: scale(1); }
 }
 
 .card-header {
