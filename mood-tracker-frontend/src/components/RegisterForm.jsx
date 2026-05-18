@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import ErrorMessage from './ErrorMessage'
 
 /**
- * Registration form with Paper & Ink styling.
+ * Registration form — Paper & Ink Neo-Brutalism design.
  * @param {{ onRegister: (email, password) => Promise<void>, onSwitch: () => void, error: string|null }} props
  */
 export default function RegisterForm({ onRegister, onSwitch, error }) {
@@ -22,25 +22,25 @@ export default function RegisterForm({ onRegister, onSwitch, error }) {
   }
 
   return (
-    <div className="auth-wrapper">
-      <div className="auth-container">
-        <h1 className="auth-title">Begin Your Journal</h1>
-        <p className="auth-subtitle">Create an account to start tracking your mood</p>
-        <div className="auth-divider" />
+    <div className="auth-page">
+      <h1 className="auth-title">My Journal</h1>
+      <p className="auth-subtitle">· Begin your ledger ·</p>
+      <div className="auth-divider-line" />
 
+      <div className="auth-card">
         <ErrorMessage message={error} />
 
         <form onSubmit={handleSubmit} noValidate>
           <div className="auth-field">
             <label className="auth-label" htmlFor="register-email">
-              Email
+              Your Email Address
             </label>
             <input
               id="register-email"
               className="auth-input"
               type="email"
               autoComplete="email"
-              placeholder="you@example.com"
+              placeholder="e.g. wanderer@paper.ink"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -50,7 +50,7 @@ export default function RegisterForm({ onRegister, onSwitch, error }) {
 
           <div className="auth-field">
             <label className="auth-label" htmlFor="register-password">
-              Password
+              Choose a Passcode
             </label>
             <input
               id="register-password"
@@ -67,19 +67,24 @@ export default function RegisterForm({ onRegister, onSwitch, error }) {
 
           <button
             type="submit"
-            className="auth-btn"
+            className="auth-btn-primary"
             disabled={loading || !email.trim() || !password}
           >
-            {loading ? 'Creating account…' : 'Create Account'}
+            {loading ? 'Opening ledger…' : 'Start Writing'}
           </button>
         </form>
+      </div>
 
-        <p className="auth-switch">
-          Already have an account?{' '}
-          <button type="button" className="auth-switch-btn" onClick={onSwitch}>
-            Login
-          </button>
-        </p>
+      <p className="auth-switch">
+        Already a diarist?{' '}
+        <span className="auth-switch-link" onClick={onSwitch} role="button" tabIndex={0}
+          onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onSwitch()}>
+          Unlock your journal
+        </span>
+      </p>
+
+      <div className="auth-footer">
+        🔒 End-to-end encrypted personal reflections.
       </div>
     </div>
   )
