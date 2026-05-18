@@ -1,0 +1,43 @@
+version: '3.9'
+
+services:
+  api:
+    build:
+      context: ./MoodTrackerApi
+      dockerfile: Dockerfile
+    container_name: mood-tracker-api
+    ports:
+      - "5000:5000"
+    volumes:
+      - db-data:/app/db
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Data Source=/app/db/mood_tracker.db
+
+  frontend:
+    build:
+      context: ./mood-tracker-frontend
+      dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=http://localhost:5000
+    container_name: mood-tracker-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - api
+
+  php-summary:
+    image: php:8.2-cli
+    container_name: mood-tracker-php
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./summary.php:/var/www/summary.php
+      - db-data:/var/www/db
+    working_dir: /var/www
+    command: >
+      sh -c "ln -sf /var/www/db/mood_tracker.db /var/www/MoodTrackerApi/mood_tracker.db 2>/dev/null || true &&
+             php -S 0.0.0.0:8080 summary.php"
+
+volumes:
+  db-data:
