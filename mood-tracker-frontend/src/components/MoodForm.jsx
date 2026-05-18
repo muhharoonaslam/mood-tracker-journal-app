@@ -23,7 +23,7 @@ function formatCurrentDate() {
  *   onBack: () => void
  * }} props
  */
-export default function MoodForm({ onSubmit, submitting, error, onBack }) {
+export default function MoodForm({ onSubmit, submitting, error, onBack, compact = false }) {
   const [selectedMood, setSelectedMood] = useState(null)
   const [note, setNote] = useState('')
 
@@ -36,14 +36,18 @@ export default function MoodForm({ onSubmit, submitting, error, onBack }) {
   }
 
   return (
-    <div className="log-view">
-      <button type="button" className="log-back" onClick={onBack}>
-        ← Back
-      </button>
+    <div className={compact ? 'log-view log-view--compact' : 'log-view'}>
+      {!compact && (
+        <button type="button" className="log-back" onClick={onBack}>
+          ← Back
+        </button>
+      )}
 
-      <div className="log-date-stamp">{formatCurrentDate()}</div>
+      {!compact && (
+        <div className="log-date-stamp">{formatCurrentDate()}</div>
+      )}
 
-      <p className="log-question">How are you feeling?</p>
+      <p className="log-question">{compact ? 'How are you feeling?' : 'How are you feeling?'}</p>
 
       <div className="mood-cards-row">
         {MOODS.map((mood) => (
