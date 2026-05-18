@@ -26,13 +26,12 @@ args = "Start application"
 name = "Backend API"
 author = "agent"
 
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "cd MoodTrackerApi && dotnet run"
-waitForPort = 8000
-
 [workflows.workflow.metadata]
 outputType = "console"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd MoodTrackerApi && dotnet bin/Release/net8.0/MoodTrackerApi.dll"
 
 [[workflows.workflow]]
 name = "Start application"
