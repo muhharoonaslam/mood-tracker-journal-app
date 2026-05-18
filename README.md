@@ -1,6 +1,8 @@
 # Paper & Ink — Mood Tracker Journal
 
-A full-stack mood tracking web application with a warm, paper-and-ink journal aesthetic. Users register, log their mood (Happy, Neutral, Sad) with an optional note, and view their recent mood history on a horizontally scrollable timeline.
+A full-stack mood tracking web application built on the **Paper & Ink** design system — a Neo-Brutalist, tactile-sketching aesthetic that feels like writing in a physical notebook.
+
+Users register, log their mood (Happy / Neutral / Sad) with an optional note, and review their recent history on a scrollable timeline. The app adapts its entire layout between mobile and desktop — bottom-nav + FAB on mobile, persistent sidebar + multi-column grid on desktop.
 
 ---
 
@@ -23,16 +25,14 @@ A full-stack mood tracking web application with a warm, paper-and-ink journal ae
 | Database | SQLite |
 | Auth | JWT (Bearer tokens) |
 | Frontend | React 18 + Vite 5 |
-| Styling | Plain CSS (Paper & Ink theme) |
-| Faces | HTML Canvas (no SVG/emoji/images) |
+| Styling | Plain CSS — Paper & Ink design system |
+| Drawing | HTML Canvas — mood faces, tally marks, bar chart |
 | Bonus | PHP 8 summary page |
 | Containers | Docker + Docker Compose |
 
 ---
 
 ## Quick Start (Docker)
-
-The fastest way to run everything locally:
 
 ```bash
 git clone https://github.com/muhharoonaslam/mood-tracker-journal-app.git
@@ -54,7 +54,7 @@ docker-compose up --build
 
 - [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
 - [Node.js 20+](https://nodejs.org/)
-- PHP 8+ with `pdo_sqlite` extension (optional, for summary page)
+- PHP 8+ with `pdo_sqlite` extension (optional)
 
 ### 1. Run the API
 
@@ -63,9 +63,8 @@ cd MoodTrackerApi
 dotnet run
 ```
 
-The API starts on `http://localhost:5000`. Swagger UI is at `http://localhost:5000/swagger`.
-
-SQLite database (`mood_tracker.db`) is created automatically on first run inside the `MoodTrackerApi/` directory.
+Starts on `http://localhost:5000`. Swagger UI at `http://localhost:5000/swagger`.
+`mood_tracker.db` is created automatically on first run.
 
 ### 2. Run the React Frontend
 
@@ -75,16 +74,13 @@ npm install
 npm run dev
 ```
 
-Frontend runs at `http://localhost:5173`. API calls are proxied to `http://localhost:5000` via Vite's dev proxy.
+Starts at `http://localhost:5173`. API calls proxy to `http://localhost:5000` via Vite.
 
 ### 3. Run the PHP Summary Page (optional)
 
 ```bash
-# From repo root — requires the API to have run at least once
 php -S localhost:8080 summary.php
 ```
-
-Open `http://localhost:8080`.
 
 ---
 
@@ -92,57 +88,51 @@ Open `http://localhost:8080`.
 
 Base URL: `http://localhost:5000`
 
-### Authentication Endpoints
+### Auth Endpoints
 
 #### `POST /api/auth/register`
 
-Register a new account.
-
-**Request body:**
 ```json
+// Request
 { "email": "user@example.com", "password": "Password123!" }
+
+// 201 Created
+{ "message": "Account created successfully." }
 ```
 
-**Responses:**
 | Status | Meaning |
 |--------|---------|
 | 201 | Account created |
 | 400 | Validation error |
 | 409 | Email already in use |
 
----
-
 #### `POST /api/auth/login`
 
-Login and receive a JWT.
-
-**Request body:**
 ```json
+// Request
 { "email": "user@example.com", "password": "Password123!" }
-```
 
-**Response (200):**
-```json
+// 200 OK
 { "token": "eyJhbGci..." }
 ```
 
----
+| Status | Meaning |
+|--------|---------|
+| 200 | Token returned |
+| 400 | Missing fields |
+| 401 | Wrong credentials |
 
 ### Mood Endpoints
 
-All mood endpoints require `Authorization: Bearer <token>`.
+All require `Authorization: Bearer <token>`.
 
 #### `POST /api/moods`
 
-Log a new mood entry.
-
-**Request body:**
 ```json
+// Request
 { "moodType": "Happy", "note": "Had a great day." }
-```
 
-**Response (201):**
-```json
+// 201 Created
 {
   "id": 1,
   "moodType": "Happy",
@@ -151,25 +141,22 @@ Log a new mood entry.
 }
 ```
 
-**Validation:**
-- `moodType` required, must be `Happy`, `Neutral`, or `Sad` (case-sensitive)
+Validation:
+- `moodType` required, must be exactly `Happy`, `Neutral`, or `Sad`
 - `note` optional, max 300 characters
-
----
 
 #### `GET /api/moods/recent`
 
-Fetch the 7 most recent mood entries for the logged-in user.
+Returns the logged-in user's last 7 entries, newest first.
 
-**Response (200):**
 ```json
 [
-  { "id": 3, "moodType": "Neutral", "timestampUtc": "...", "note": null },
-  { "id": 2, "moodType": "Happy",   "timestampUtc": "...", "note": "Productive!" }
+  { "id": 7, "moodType": "Neutral", "timestampUtc": "...", "note": "Quiet day." },
+  { "id": 6, "moodType": "Happy",   "timestampUtc": "...", "note": "Productive!" }
 ]
 ```
 
-Entries are sorted **newest first**. Returns an empty array if no entries exist.
+Returns `[]` if no entries exist.
 
 ---
 
@@ -177,30 +164,30 @@ Entries are sorted **newest first**. Returns an empty array if no entries exist.
 
 ### Schema
 
-**Users table:**
+**Users**
 
 | Column | Type | Notes |
 |--------|------|-------|
-| Id | INTEGER (PK) | Auto-increment |
+| Id | INTEGER PK | Auto-increment |
 | Email | TEXT | Unique index |
 | PasswordHash | TEXT | BCrypt hash |
 | CreatedAtUtc | TEXT | ISO-8601 UTC |
 
-**MoodEntries table:**
+**MoodEntries**
 
 | Column | Type | Notes |
 |--------|------|-------|
-| Id | INTEGER (PK) | Auto-increment |
-| UserId | INTEGER (FK) | References Users.Id |
+| Id | INTEGER PK | Auto-increment |
+| UserId | INTEGER FK | → Users.Id |
 | MoodType | TEXT | Happy / Neutral / Sad |
 | TimestampUtc | TEXT | ISO-8601 UTC |
 | Note | TEXT | Nullable |
 
-### EF Core Setup
+### Setup
 
-The project uses `Database.EnsureCreated()` on startup — no migration files needed. The SQLite file is created at `MoodTrackerApi/mood_tracker.db` (or at the path configured in `ConnectionStrings:DefaultConnection`).
+`Database.EnsureCreated()` runs on startup — no migration files are needed. The SQLite file is created at `MoodTrackerApi/mood_tracker.db`.
 
-To run a code-first migration instead:
+To use EF migrations instead:
 
 ```bash
 cd MoodTrackerApi
@@ -212,14 +199,57 @@ dotnet ef database update
 
 ## Auth Flow
 
-1. Client calls `POST /api/auth/register` or `/login`.
-2. On login, API validates credentials (BCrypt), then issues a signed JWT containing `userId` and `email` claims.
-3. Client stores the token in `localStorage`.
-4. All subsequent mood requests include `Authorization: Bearer <token>`.
-5. ASP.NET Core's JWT middleware validates the token and populates `HttpContext.User`.
-6. Controllers extract `UserId` from `ClaimTypes.NameIdentifier`.
+1. Client posts to `/api/auth/register` or `/api/auth/login`.
+2. On login, BCrypt verifies the password. A signed JWT is returned containing `userId` and `email` claims (24 h expiry, HMAC-SHA256).
+3. The frontend stores the token in `localStorage` and decodes the email claim client-side for display.
+4. Every mood request includes `Authorization: Bearer <token>`.
+5. ASP.NET Core's JWT middleware populates `HttpContext.User`. Controllers read `UserId` from `ClaimTypes.NameIdentifier`.
+6. The login endpoint returns an identical 401 for "user not found" and "wrong password" — no email enumeration.
 
-JWT settings (secret key, issuer, expiry) live in `appsettings.json` under `JwtSettings`.
+JWT settings live in `appsettings.json → JwtSettings`. Rotate the secret key and inject it as an environment variable in production.
+
+---
+
+## Design System — Paper & Ink
+
+The UI follows a **Neo-Brutalism + Tactile Sketching** philosophy: high-contrast ink-on-paper visuals, irregular shapes, and hard-edged shadows. Every element should feel hand-drawn on quality stationery.
+
+### Colors
+
+| Token | Hex | Usage |
+|-------|-----|-------|
+| `--surface` | `#fcf9f1` | Main background (moleskine cream) |
+| `--aged-paper` | `#F0EAD6` | Cards and secondary surfaces |
+| `--ink` | `#1A1A1A` | Borders, text, shadows |
+| `--terracotta` | `#E9A390` | Active states, streak card, today's bar |
+| `--graphite` | `#7A7567` | Muted text, timestamps, grid lines |
+| `--error-red` | `#D32F2F` | Validation errors |
+
+Mood accent colors:
+
+| Mood | Hex |
+|------|-----|
+| Happy | `#E8913A` (warm amber) |
+| Neutral | `#7A8B69` (sage green) |
+| Sad | `#6B8CAE` (muted blue) |
+
+### Typography
+
+| Role | Font | Weight |
+|------|------|--------|
+| Headings, buttons, labels | **Cabin Sketch** | 700 |
+| Body, inputs, notes | **Architects Daughter** | 400 |
+
+Both loaded from Google Fonts in `index.html`.
+
+### Shape & Depth Rules
+
+- **Border radius:** `3px 5px 2px 4px` — irregular corners for a hand-drawn feel
+- **Borders:** `2px solid #1A1A1A` on every card, button, and input container
+- **Hard shadow:** `4px 4px 0px #1A1A1A` on all elevated elements
+- **Press interaction:** shadow removes and element shifts `translate(2px, 2px)` on `:active`
+- **Background:** dot grid via `radial-gradient(circle, rgba(122,117,103,0.35) 1px, transparent 1px)` at 20 px spacing
+- **Ruled lines:** `repeating-linear-gradient` at 28 px for note areas and textareas
 
 ---
 
@@ -228,123 +258,159 @@ JWT settings (secret key, issuer, expiry) live in `appsettings.json` under `JwtS
 ```
 src/
   api/
-    authApi.js       # register(), login()
-    moodsApi.js      # getRecent(), createMood()
+    authApi.js            # register(), login()
+    moodsApi.js           # getRecent(), createMood()
+
   components/
-    LoginForm.jsx    # "Welcome Back" auth form
-    RegisterForm.jsx # "Begin Your Journal" auth form
-    MoodSelector.jsx # Three canvas-face mood buttons
-    MoodCanvasFace.jsx # Canvas-only face renderer
-    MoodForm.jsx     # Selector + note textarea + submit
-    MoodTimeline.jsx # Horizontal scroll container
-    TimelineEntry.jsx # Individual journal card with click animation
-    ErrorMessage.jsx # Inline error display
-    LoadingState.jsx # Animated loading dots
+    LoginForm.jsx         # "My Journal / Unlock" auth page
+    RegisterForm.jsx      # "Begin your ledger" auth page
+    MoodCanvasFace.jsx    # Wobbly bezier canvas face (Happy/Neutral/Sad)
+    MoodSelector.jsx      # Three mood-card picker
+    MoodForm.jsx          # Date stamp + mood picker + ruled textarea + "Ink it"
+    MoodTimeline.jsx      # Horizontal scroll (mobile) / grid (desktop) container
+    TimelineEntry.jsx     # Rotated aged-paper card with click pulse animation
+    StreakCard.jsx        # Terracotta card — consecutive journaling days
+    ReflectionsTrend.jsx  # Canvas bar chart — entries per weekday
+    SummaryView.jsx       # Month in Review — tally cards + daily ledger
+    TallyMarks.jsx        # Canvas-drawn tally strokes (4 vertical + diagonal cross)
+    BottomNav.jsx         # Mobile-only fixed bottom nav (Journal / Log / Summary)
+    DesktopSidebar.jsx    # Desktop-only sidebar — nav + inline mood form + user
+    ErrorMessage.jsx      # Red-ink inline error
+    LoadingState.jsx      # Handwritten-style loading text
+
   hooks/
-    useAuth.js       # token, user, login(), register(), logout()
-    useMoods.js      # entries, loading, error, fetchEntries(), submitMood()
-  App.jsx            # Root — auth gate + layout
+    useAuth.js            # token, user, login(), register(), logout()
+    useMoods.js           # entries, loading, error, fetchEntries(), submitMood()
+
+  App.jsx                 # Auth gate + view router + useIsDesktop hook
   main.jsx
 ```
 
-**State lives in:**
-- `useAuth` — JWT token (persisted in `localStorage`), decoded user email
-- `useMoods` — entries array, loading/submitting flags, error string
-- `App` — `activeEntryId` (which timeline card was last clicked), `showRegister` toggle, `authError`
+### App Views (state: `view`)
 
-No Redux, no routing library — everything is plain React state.
+| Value | What renders |
+|-------|-------------|
+| `'timeline'` | Recent Entries cards + Reflections Trend chart + Streak card |
+| `'log'` | Full-screen mood entry form (mobile only — form is in sidebar on desktop) |
+| `'summary'` | Month in Review with tally cards + Daily Ledger |
+
+### State
+
+| Location | State | Purpose |
+|----------|-------|---------|
+| `useAuth` | `token`, `user` | JWT persisted in `localStorage` |
+| `useMoods` | `entries`, `loading`, `submitting`, `error` | API data + request states |
+| `App` | `view`, `activeEntryId`, `showRegister`, `authError` | Navigation + UI state |
+| `App` | `isDesktop` (via `useIsDesktop`) | `window.matchMedia('(min-width: 768px)')` listener |
+
+No Redux, no routing library.
+
+### Mobile vs Desktop Layout
+
+| | Mobile `< 768px` | Desktop `≥ 768px` |
+|---|---|---|
+| Navigation | Fixed bottom tab bar | Left sidebar (300 px) |
+| Mood form | Full-screen view via FAB | Always visible in sidebar |
+| Timeline | Horizontal snap-scroll cards | CSS `auto-fill` grid |
+| Widgets | Stacked below timeline | Sticky right column (280 px) |
+| FAB | Visible | Hidden |
 
 ---
 
 ## Canvas Mood Faces
 
-HTML Canvas was chosen because it satisfies the "no SVG, no emoji, no images, no icon fonts" requirement while keeping the drawing code self-contained and portable.
+HTML Canvas is used for all mood faces to satisfy the "no SVG, no emoji, no images, no icon fonts" requirement.
 
-Every `MoodCanvasFace` uses a `useRef`/`useEffect` pair. On mount (or when `mood`/`size` changes) it:
+`MoodCanvasFace.jsx` uses `useRef` + `useEffect`. On mount or prop change it:
 
-1. Sizes the canvas for HiDPI screens using `window.devicePixelRatio`.
-2. Draws a filled circle (face background) with a colored stroke ring.
-3. Draws two dot eyes, adjusting position per mood.
-4. Draws the mouth using `ctx.arc()`:
-   - **Happy** — upward arc (`0.15π` to `0.85π`) + warm blush circles
-   - **Neutral** — a straight horizontal line with `moveTo`/`lineTo`
-   - **Sad** — downward arc (`1.15π` to `1.85π`) + angled eyebrows via `lineTo`
+1. Scales the canvas for HiDPI via `window.devicePixelRatio`.
+2. Draws an **irregular wobbly circle** outline using 8 quadratic bezier curves with baked-in offsets — not a perfect `ctx.arc` — to simulate a hand-drawn stroke.
+3. Fills the face with aged-paper (`#F0EAD6`).
+4. Draws two dot eyes; sad faces add angled eyebrows via `lineTo`.
+5. Draws the mouth:
+   - **Happy** — upward `ctx.arc` + two blush circles
+   - **Neutral** — straight `moveTo`/`lineTo`
+   - **Sad** — downward `ctx.arc`
+6. When `animated={true}` (selected in the mood picker), a `requestAnimationFrame` loop adds a gentle vertical float via `Math.sin(t * 0.002) * 1.5 px`.
 
-When `animated={true}` (selected mood in the picker), an `requestAnimationFrame` loop adds a gentle vertical float using `Math.sin(t * 0.002) * 1.5`.
+No SVG, no emoji, no images, no icon fonts are used for mood faces.
 
-**Mood color mapping:**
+---
 
-| Mood | Color | Hex |
-|------|-------|-----|
-| Happy | Warm amber | `#E8913A` |
-| Neutral | Sage green | `#7A8B69` |
-| Sad | Muted blue | `#6B8CAE` |
+## Canvas Tally Marks
+
+`TallyMarks.jsx` draws proper tally mark groups on canvas — 4 vertical strokes + 1 diagonal cross stroke per group of 5. It accepts `count`, `color`, and `height` props, scales for HiDPI, and renders `—` for zero.
+
+Used in:
+- **Summary tally cards** — one per mood, colored in the mood's accent color
+- **Daily Ledger rows** — showing how many entries were logged that day
+
+This avoids unreliable unicode combining characters and renders consistently across all browsers and fonts.
+
+---
+
+## Canvas Bar Chart (Reflections Trend)
+
+`ReflectionsTrend.jsx` draws a weekly bar chart (Mon–Sun) on canvas:
+
+- Counts entries from the `entries` array per day of the week
+- Today's bar is rendered in **terracotta**; all others in **ink black**
+- Shadow drawn before the bar (not after), avoiding the "shadow on top" bug
+- Uses a `ResizeObserver` on a wrapper `<div>` to read the real container width — solves the `canvas.offsetWidth === 0` problem on first render
+- Redraws on any container resize (sidebar toggle, window resize, orientation change)
+
+---
+
+## Streak Card
+
+`StreakCard.jsx` calculates the current consecutive journaling streak from the entries array:
+
+1. Extracts unique calendar dates (UTC) from entries, sorted newest first.
+2. Checks that the most recent date is today or yesterday (otherwise streak = 0).
+3. Walks backward through dates, counting consecutive days with a 1-day gap.
+
+Displayed in a terracotta card with a large `Cabin Sketch` number and a rotating motivational quote.
+
+---
+
+## Month in Review (Summary View)
+
+`SummaryView.jsx` shows two sections:
+
+**Tally Cards** — one per mood, filtered to the current calendar month:
+- Canvas mood face
+- Mood name in its accent color
+- Canvas-drawn tally marks (`TallyMarks`)
+- Numeric count
+
+**Daily Ledger** — all-time entries grouped by calendar day (one row per day):
+- Date (e.g. "May 18, 2026" — full year, not `'2-digit'`)
+- Dominant mood for that day (colored in accent)
+- Canvas tally marks for the number of entries that day
+
+A "Most felt this month" stat bar at the top highlights the leading mood with its accent color.
 
 ---
 
 ## PHP Summary Page
 
-`summary.php` (in the repo root) connects to the same `mood_tracker.db` SQLite file used by the .NET API:
+`summary.php` reads directly from the same `mood_tracker.db` file used by the .NET API:
 
 ```php
 $pdo = new PDO('sqlite:' . __DIR__ . '/MoodTrackerApi/mood_tracker.db');
 ```
 
-It queries all mood entries joined to users and renders them in an HTML table with colour-coded mood badges. The page is entirely server-rendered — no JavaScript.
+It joins `MoodEntries` to `Users` and renders all entries in a styled HTML table. No JavaScript, no separate database.
 
-**To run locally:**
+**Columns:** ID, User ID, Email, Mood, Timestamp UTC, Note
+
+**To run:**
 ```bash
-# From repo root (requires the .NET API to have run at least once)
+# From repo root — API must have run at least once to create the DB
 php -S localhost:8080 summary.php
 ```
 
-**Columns displayed:** ID, User ID, Email, Mood, Timestamp UTC, Note
-
-The PHP page is not deployed separately — it can be run locally or via Docker (see `docker-compose.yml` `php-summary` service).
-
----
-
-## Deployment
-
-### Frontend (Vercel / Netlify)
-
-```bash
-cd mood-tracker-frontend
-npm run build   # outputs to dist/
-```
-
-Set environment variable:
-```
-VITE_API_URL=https://your-api-url.com
-```
-
-Deploy the `dist/` folder to Vercel, Netlify, or any static host.
-
-### API (Railway / Render / Azure)
-
-```bash
-cd MoodTrackerApi
-dotnet publish -c Release -o ./publish
-```
-
-Set environment variables on the host:
-```
-ConnectionStrings__DefaultConnection=Data Source=/data/mood_tracker.db
-ASPNETCORE_ENVIRONMENT=Production
-```
-
-Mount a persistent volume at `/data` so the SQLite file survives restarts.
-
-### Docker (Full Stack)
-
-```bash
-docker-compose up --build
-```
-
-The `docker-compose.yml` defines three services:
-- `api` — .NET API on port 5000, SQLite stored in a named volume
-- `frontend` — React app served by nginx on port 3000, proxies `/api/*` to the API container
-- `php-summary` — PHP built-in server on port 8080
+Available via Docker at `http://localhost:8080` (see `docker-compose.yml`).
 
 ---
 
@@ -358,7 +424,7 @@ The `docker-compose.yml` defines three services:
 ### Login
 - `email` — required
 - `password` — required
-- Wrong credentials → 401 Unauthorized (identical response for wrong email or wrong password)
+- Wrong credentials → 401 (identical message for wrong email or wrong password)
 
 ### Mood Entry
 - `moodType` — required, must be exactly `Happy`, `Neutral`, or `Sad`
@@ -367,16 +433,57 @@ The `docker-compose.yml` defines three services:
 
 ---
 
+## Deployment
+
+### Frontend (Vercel / Netlify)
+
+```bash
+cd mood-tracker-frontend
+npm run build   # outputs to dist/
+```
+
+Set env var: `VITE_API_URL=https://your-api-url.com`
+
+Deploy `dist/` to Vercel, Netlify, or any static host.
+
+### API (Railway / Render / Azure)
+
+```bash
+cd MoodTrackerApi
+dotnet publish -c Release -o ./publish
+```
+
+Set on the host:
+```
+ConnectionStrings__DefaultConnection=Data Source=/data/mood_tracker.db
+ASPNETCORE_ENVIRONMENT=Production
+```
+
+Mount a persistent volume at `/data` so SQLite survives restarts.
+
+### Docker (Full Stack)
+
+```bash
+docker-compose up --build
+```
+
+Three services:
+- `api` — .NET 8 API on port 5000, SQLite in a named Docker volume
+- `frontend` — React served by nginx on port 3000, proxies `/api/*` to the API
+- `php-summary` — PHP built-in server on port 8080, mounts the same volume
+
+---
+
 ## With More Time
 
-With more time I would add mood analytics — a weekly trend chart showing mood frequency over time using Canvas-drawn bar or line graphs — so users can identify patterns like "I'm usually Sad on Mondays" and gain more meaningful insight from their journal data.
+With more time I would add **export and sharing** — letting users download their mood history as a PDF journal page (rendered with Canvas in the same Paper & Ink aesthetic) or share a single entry as an image. This fits naturally with the tactile, handwritten feel of the design and gives the journaling experience a tangible, shareable output beyond the screen.
 
 ---
 
 ## Security Notes
 
-- Passwords are hashed with BCrypt (work factor 10).
-- JWT tokens are signed with HMAC-SHA256 and expire after 24 hours.
-- The login endpoint returns an identical 401 for both "user not found" and "wrong password" to prevent email enumeration.
-- CORS is open (`AllowAnyOrigin`) — tighten to the deployed frontend domain in production.
-- The JWT secret key in `appsettings.json` should be rotated and stored as a secret/environment variable in production.
+- Passwords hashed with BCrypt (work factor 10).
+- JWT signed with HMAC-SHA256, 24 h expiry.
+- Login returns identical 401 for wrong email and wrong password — no enumeration.
+- CORS is open (`AllowAnyOrigin`) for development. Restrict to the deployed frontend origin in production.
+- Rotate the JWT secret in `appsettings.json` and inject it as an environment variable before deploying.
