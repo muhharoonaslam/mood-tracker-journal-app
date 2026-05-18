@@ -126,7 +126,8 @@ export default function SummaryView({ entries }) {
                   ))}
                 </span>
                 <span className="ledger-tally">
-                  <TallyMarks count={moods.length} height={20} />
+                  <TallyMarks count={moods.length} height={28} />
+                  <span className="ledger-tally-count">{moods.length}</span>
                 </span>
               </div>
             )
