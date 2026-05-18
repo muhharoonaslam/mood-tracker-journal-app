@@ -108,19 +108,20 @@ export default function SummaryView({ entries }) {
             <span>Tally</span>
           </div>
           {ledgerRows.map(({ date, moods }) => {
-            // Unique moods logged that day, in fixed order
-            const uniqueMoods = ['Happy', 'Neutral', 'Sad'].filter((m) => moods.includes(m))
+            const freq = {}
+            moods.forEach((m) => { freq[m] = (freq[m] || 0) + 1 })
+            const orderedMoods = ['Happy', 'Neutral', 'Sad'].filter((m) => freq[m])
             return (
               <div className="ledger-row" key={date}>
                 <span>{formatLedgerDate(date)}</span>
                 <span className="ledger-moods">
-                  {uniqueMoods.map((m) => (
+                  {orderedMoods.map((m) => (
                     <span
                       key={m}
                       className="ledger-mood-chip"
                       style={{ color: MOOD_COLORS[m], borderColor: MOOD_COLORS[m] }}
                     >
-                      {m}
+                      {m} ×{freq[m]}
                     </span>
                   ))}
                 </span>
