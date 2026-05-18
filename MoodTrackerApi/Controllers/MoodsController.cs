@@ -73,7 +73,7 @@ public class MoodsController : ControllerBase
         var entries = await _db.MoodEntries
             .Where(e => e.UserId == userId)
             .OrderByDescending(e => e.TimestampUtc)
-            .Take(7)
+            .Take(100)
             .Select(e => new MoodEntryResponseDto
             {
                 Id = e.Id,
