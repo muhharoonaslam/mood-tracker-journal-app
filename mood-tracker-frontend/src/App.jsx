@@ -31,6 +31,7 @@ export default function App() {
   const [authError, setAuthError] = useState(null)
   const [view, setView] = useState('timeline') // 'timeline' | 'log' | 'summary'
   const [activeEntryId, setActiveEntryId] = useState(null)
+  const [showLogModal, setShowLogModal] = useState(false)
   const isDesktop = useIsDesktop()
 
   useEffect(() => {
@@ -82,7 +83,11 @@ export default function App() {
   async function handleMoodSubmit(moodType, note) {
     await submitMood(token, moodType, note)
     await fetchEntries(token)
-    if (!isDesktop) setView('timeline')
+    if (isDesktop) {
+      setShowLogModal(false)
+    } else {
+      setView('timeline')
+    }
   }
 
   if (!isAuthenticated) {
@@ -151,17 +156,28 @@ export default function App() {
         </div>
       </header>
 
-      {/* Desktop sidebar — hidden on mobile via CSS */}
       {isDesktop && (
         <DesktopSidebar
           view={view}
           setView={setView}
           user={user}
           logout={logout}
-          onMoodSubmit={handleMoodSubmit}
-          submitting={submitting}
-          error={error}
+          onOpenLogModal={() => setShowLogModal(true)}
         />
+      )}
+
+      {/* Log Mood modal — desktop only */}
+      {isDesktop && showLogModal && (
+        <div className="modal-backdrop" onClick={() => setShowLogModal(false)}>
+          <div className="modal-sheet" onClick={(e) => e.stopPropagation()}>
+            <MoodForm
+              onSubmit={handleMoodSubmit}
+              submitting={submitting}
+              error={error}
+              onBack={() => setShowLogModal(false)}
+            />
+          </div>
+        </div>
       )}
 
       <main className="app-content">

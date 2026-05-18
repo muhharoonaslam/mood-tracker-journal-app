@@ -958,46 +958,55 @@
     border-radius: 1px;
   }
 
-  /* ── Compact mood form in sidebar ── */
-  .sidebar-form-area {
-    flex: 1;
-  }
-
-  .log-view--compact {
-    padding: 0;
-  }
-
-  .log-view--compact .log-question {
-    font-size: 16px;
-    text-align: left;
-    margin-bottom: 12px;
-  }
-
-  .log-view--compact .mood-cards-row {
-    gap: 8px;
-    margin-bottom: 12px;
-  }
-
-  .log-view--compact .mood-card {
-    padding: 10px 6px;
-  }
-
-  .log-view--compact .scribble-label {
-    font-size: 16px;
-    margin-bottom: 8px;
-  }
-
-  .log-view--compact .ruled-textarea {
-    min-height: 100px;
-    font-size: 14px;
-    rows: 4;
-  }
-
-  .log-view--compact .ink-it-btn {
-    padding: 10px 24px;
-    font-size: 16px;
-    margin-top: 12px;
+  /* ── Log Mood button in sidebar ── */
+  .sidebar-log-btn {
     width: 100%;
+    padding: 12px 16px;
+    font-family: var(--font-sketch);
+    font-size: 17px;
+    font-weight: 700;
+    color: #ffffff;
+    background: var(--ink);
+    border: 2px solid var(--ink);
+    border-radius: var(--radius);
+    box-shadow: 3px 3px 0px var(--terracotta);
+    cursor: pointer;
+    transition: transform 0.08s, box-shadow 0.08s;
+    text-align: center;
+  }
+
+  .sidebar-log-btn:hover {
+    background: var(--terracotta);
+    border-color: var(--ink);
+    color: var(--ink);
+  }
+
+  .sidebar-log-btn:active {
+    transform: translate(2px, 2px);
+    box-shadow: none;
+  }
+
+  /* ── Log Mood modal ── */
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(26, 26, 26, 0.55);
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-sheet {
+    background: var(--surface);
+    border: 2px solid var(--ink);
+    border-radius: var(--radius);
+    box-shadow: 6px 6px 0px var(--ink);
+    padding: 32px;
+    width: 480px;
+    max-width: calc(100vw - 48px);
+    max-height: calc(100vh - 80px);
+    overflow-y: auto;
   }
 
   /* ── Sidebar user footer ── */
