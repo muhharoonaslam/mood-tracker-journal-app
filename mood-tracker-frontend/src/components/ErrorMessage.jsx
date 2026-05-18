@@ -1,13 +1,13 @@
 import React from 'react'
 
 /**
- * Displays an inline error message in the Paper & Ink style.
- * @param {{ message: string }} props
+ * Inline error message — red ink style.
+ * @param {{ message: string|null }} props
  */
 export default function ErrorMessage({ message }) {
   if (!message) return null
   return (
-    <div className="error-message" role="alert">
+    <div className="error-msg" role="alert">
       {message}
     </div>
   )

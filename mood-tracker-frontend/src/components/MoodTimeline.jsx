@@ -3,12 +3,12 @@ import TimelineEntry from './TimelineEntry'
 import LoadingState from './LoadingState'
 
 /**
- * Horizontally scrolling list of mood entries.
+ * Vertical list of mood entry cards.
  * @param {{
  *   entries: object[],
  *   loading: boolean,
- *   activeEntryId: string|number|null,
- *   onEntryClick: (id: string|number) => void
+ *   activeEntryId?: string|number|null,
+ *   onEntryClick?: (id: string|number) => void
  * }} props
  */
 export default function MoodTimeline({ entries, loading, activeEntryId, onEntryClick }) {
@@ -19,17 +19,18 @@ export default function MoodTimeline({ entries, loading, activeEntryId, onEntryC
   if (!entries || entries.length === 0) {
     return (
       <p className="timeline-empty">
-        No entries yet. Log your first mood above.
+        No entries yet — tap + to log your first mood.
       </p>
     )
   }
 
   return (
-    <div className="timeline-scroll" role="list" aria-label="Mood entries">
-      {entries.map((entry) => (
+    <div className="timeline-cards" role="list" aria-label="Mood entries">
+      {entries.map((entry, index) => (
         <TimelineEntry
           key={entry.id}
           entry={entry}
+          index={index}
           isActive={entry.id === activeEntryId}
           onClick={onEntryClick}
         />

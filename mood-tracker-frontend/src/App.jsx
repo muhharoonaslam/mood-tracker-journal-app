@@ -5,7 +5,10 @@ import LoginForm from './components/LoginForm'
 import RegisterForm from './components/RegisterForm'
 import MoodForm from './components/MoodForm'
 import MoodTimeline from './components/MoodTimeline'
-import ErrorMessage from './components/ErrorMessage'
+import StreakCard from './components/StreakCard'
+import ReflectionsTrend from './components/ReflectionsTrend'
+import SummaryView from './components/SummaryView'
+import BottomNav from './components/BottomNav'
 import './App.css'
 
 export default function App() {
@@ -14,16 +17,13 @@ export default function App() {
 
   const [showRegister, setShowRegister] = useState(false)
   const [authError, setAuthError] = useState(null)
-  const [activeEntryId, setActiveEntryId] = useState(null)
+  const [view, setView] = useState('timeline') // 'timeline' | 'log' | 'summary'
 
-  // Fetch entries once authenticated
   useEffect(() => {
     if (isAuthenticated && token) {
       fetchEntries(token)
     }
   }, [isAuthenticated, token, fetchEntries])
-
-  // ── Auth handlers ──
 
   async function handleLogin(email, password) {
     setAuthError(null)
@@ -65,18 +65,11 @@ export default function App() {
     setShowRegister(false)
   }
 
-  // ── Mood handlers ──
-
   async function handleMoodSubmit(moodType, note) {
     await submitMood(token, moodType, note)
     await fetchEntries(token)
+    setView('timeline')
   }
-
-  const handleEntryClick = useCallback((id) => {
-    setActiveEntryId((prev) => (prev === id ? null : id))
-  }, [])
-
-  // ── Unauthenticated view ──
 
   if (!isAuthenticated) {
     return showRegister ? (
@@ -94,16 +87,11 @@ export default function App() {
     )
   }
 
-  // ── Authenticated view ──
-
   return (
-    <div className="app-root">
-      {/* ── Header ── */}
+    <div className="app-shell">
       <header className="app-header">
-        <span className="app-header-brand">
-          Paper <span>&amp;</span> Ink Journal
-        </span>
-        <div className="app-header-right">
+        <span className="app-header-title">My Journal</span>
+        <div className="app-header-icons">
           {user?.email && (
             <span className="app-header-email">{user.email}</span>
           )}
@@ -113,36 +101,43 @@ export default function App() {
         </div>
       </header>
 
-      {/* ── Main ── */}
-      <main className="app-main">
-        {/* Mood entry section */}
-        <section className="mood-section" aria-label="Log your mood">
-          <h2 className="section-heading">How are you feeling?</h2>
-          <div className="section-rule" />
+      <main className="app-content">
+        {view === 'timeline' && (
+          <div className="timeline-view">
+            <h2 className="section-title">Recent Entries</h2>
+            <div className="section-underline" />
+            <MoodTimeline entries={entries} loading={loading} />
+            <ReflectionsTrend entries={entries} />
+            <StreakCard entries={entries} />
+          </div>
+        )}
+
+        {view === 'log' && (
           <MoodForm
             onSubmit={handleMoodSubmit}
             submitting={submitting}
             error={error}
+            onBack={() => setView('timeline')}
           />
-        </section>
+        )}
 
-        {/* Timeline section */}
-        <section className="timeline-section" aria-label="Recent mood entries">
-          <h2 className="section-heading">Recent Entries</h2>
-          <div className="section-rule" />
-          {!error && (
-            <MoodTimeline
-              entries={entries}
-              loading={loading}
-              activeEntryId={activeEntryId}
-              onEntryClick={handleEntryClick}
-            />
-          )}
-          {error && !submitting && (
-            <ErrorMessage message={error} />
-          )}
-        </section>
+        {view === 'summary' && (
+          <SummaryView entries={entries} />
+        )}
       </main>
+
+      {/* FAB — only on timeline view */}
+      {view === 'timeline' && (
+        <button
+          className="fab"
+          aria-label="Log new mood"
+          onClick={() => setView('log')}
+        >
+          +
+        </button>
+      )}
+
+      <BottomNav view={view} setView={setView} />
     </div>
   )
 }
