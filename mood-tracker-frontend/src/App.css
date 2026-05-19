@@ -979,6 +979,8 @@
   font-family: var(--font-hand);
   font-size: 12px;
   margin-top: 6px;
+  text-align: center;
+  width: 100%;
 }
 
 .tally-marks {
@@ -1003,6 +1005,8 @@
   color: var(--ink);
   margin-top: 6px;
   line-height: 1;
+  text-align: center;
+  width: 100%;
 }
 
 .ledger-title {
