@@ -53,6 +53,10 @@ externalPort = 80
 localPort = 8000
 externalPort = 8000
 
+[[ports]]
+localPort = 8080
+externalPort = 3000
+
 [deployment]
 deploymentTarget = "autoscale"
 run = ["bash", "-c", "cd MoodTrackerApi/out && dotnet MoodTrackerApi.dll & cd mood-tracker-frontend && npx serve -s dist -l 5000"]
