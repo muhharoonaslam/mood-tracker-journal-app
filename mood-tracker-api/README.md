@@ -1,4 +1,4 @@
-# MoodTrackerApi
+# mood-tracker-api
 
 Part of the [mood-tracker-journal-app](../README.md) monorepo.
 
@@ -7,7 +7,7 @@ Part of the [mood-tracker-journal-app](../README.md) monorepo.
 Requires [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0).
 
 ```bash
-cd MoodTrackerApi
+cd mood-tracker-api
 dotnet run
 ```
 

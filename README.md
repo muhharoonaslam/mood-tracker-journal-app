@@ -9,14 +9,14 @@ A full-stack mood tracking web application built on the **Paper & Ink** design s
 ```
 mood-tracker-journal-app/
 ├── mood-tracker-frontend/   # React 18 + Vite 5
-├── MoodTrackerApi/          # ASP.NET Core 8 Web API
+├── mood-tracker-api/          # ASP.NET Core 8 Web API
 ├── summary.php              # PHP 8 admin summary page
 ├── docker-compose.yml       # Full-stack orchestration
 └── package.json             # Root npm workspace
 ```
 
 - [mood-tracker-frontend/README.md](mood-tracker-frontend/README.md)
-- [MoodTrackerApi/README.md](MoodTrackerApi/README.md)
+- [mood-tracker-api/README.md](mood-tracker-api/README.md)
 
 ---
 
@@ -47,7 +47,7 @@ A test user is seeded automatically on every startup — no manual registration 
 
 The login page has a **"fill in"** link to pre-populate both fields with one click.
 
-The seed is handled by `MoodTrackerApi/Data/DatabaseSeeder.cs` (an `IHostedService`). It checks whether the email already exists before inserting — fully idempotent, safe across restarts and rebuilds.
+The seed is handled by `mood-tracker-api/Data/DatabaseSeeder.cs` (an `IHostedService`). It checks whether the email already exists before inserting — fully idempotent, safe across restarts and rebuilds.
 
 To change credentials, edit `DatabaseSeeder.cs`:
 
@@ -93,7 +93,7 @@ Deploy `dist/` to Vercel, Netlify, or any static host.
 ### API (Railway / Render / Azure)
 
 ```bash
-cd MoodTrackerApi
+cd mood-tracker-api
 dotnet publish -c Release -o ./publish
 ```
 
