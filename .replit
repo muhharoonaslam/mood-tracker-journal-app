@@ -35,7 +35,7 @@ outputType = "console"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "cd MoodTrackerApi && dotnet bin/Release/net8.0/MoodTrackerApi.dll"
+args = "cd mood-tracker-api && dotnet bin/Release/net8.0/MoodTrackerApi.dll"
 
 [[workflows.workflow]]
 name = "Start application"
@@ -64,10 +64,6 @@ outputType = "console"
 [[ports]]
 localPort = 5000
 externalPort = 80
-
-[[ports]]
-localPort = 8000
-externalPort = 8000
 
 [[ports]]
 localPort = 8080
