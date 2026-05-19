@@ -18,8 +18,6 @@ services:
     build:
       context: ./mood-tracker-frontend
       dockerfile: Dockerfile
-      args:
-        - VITE_API_URL=http://localhost:5000
     container_name: mood-tracker-frontend
     ports:
       - "3000:80"

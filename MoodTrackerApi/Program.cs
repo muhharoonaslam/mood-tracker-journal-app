@@ -81,8 +81,7 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-// Listen on port 8000
-builder.WebHost.UseUrls("http://localhost:8000");
+builder.WebHost.UseUrls("http://0.0.0.0:5000");
 
 var app = builder.Build();
 
