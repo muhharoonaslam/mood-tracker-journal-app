@@ -82,7 +82,10 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-var apiPort = Environment.GetEnvironmentVariable("API_PORT") ?? "8000";
+// Railway injects PORT; fall back to API_PORT for docker-compose, then 8000.
+var apiPort = Environment.GetEnvironmentVariable("PORT")
+    ?? Environment.GetEnvironmentVariable("API_PORT")
+    ?? "8000";
 builder.WebHost.UseUrls($"http://0.0.0.0:{apiPort}");
 
 var app = builder.Build();
