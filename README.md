@@ -31,7 +31,7 @@ docker compose up --build
 | Service | URL |
 |---------|-----|
 | Frontend | http://localhost:3000 |
-| API + Swagger | http://localhost:5000/swagger |
+| API + Swagger | http://localhost:8000/swagger |
 | PHP Summary | http://localhost:8080 |
 
 ---

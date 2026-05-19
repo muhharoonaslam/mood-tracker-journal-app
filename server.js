@@ -10,6 +10,12 @@ app.use(
   createProxyMiddleware({
     target: 'http://localhost:8000',
     changeOrigin: true,
+    on: {
+      error: (err, _req, res) => {
+        res.writeHead(502, { 'Content-Type': 'application/json' })
+        res.end(JSON.stringify({ error: 'API unavailable', detail: err.message }))
+      },
+    },
   })
 )
 

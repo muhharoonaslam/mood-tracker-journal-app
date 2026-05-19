@@ -11,8 +11,8 @@ cd mood-tracker-api
 dotnet run
 ```
 
-- API at `http://localhost:5000`
-- Swagger UI at `http://localhost:5000/swagger`
+- API at `http://localhost:8000`
+- Swagger UI at `http://localhost:8000/swagger`
 - Database (`mood_tracker.db`) and test user are created automatically on first run
 
 **Test account:** `test@example.com` / `password123`
@@ -24,4 +24,4 @@ dotnet run
 docker compose up --build
 ```
 
-API available at `http://localhost:5000`.
+API available at `http://localhost:8000`.
