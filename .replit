@@ -22,10 +22,6 @@ args = "Backend API"
 task = "workflow.run"
 args = "Start application"
 
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "PHP Summary"
-
 [[workflows.workflow]]
 name = "Backend API"
 author = "agent"
@@ -49,27 +45,11 @@ waitForPort = 5000
 [workflows.workflow.metadata]
 outputType = "webview"
 
-[[workflows.workflow]]
-name = "PHP Summary"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "php -S 0.0.0.0:8080 summary.php"
-waitForPort = 8080
-
-[workflows.workflow.metadata]
-outputType = "console"
-
-[[ports]]
-localPort = 3000
-externalPort = 80
-
 [[ports]]
 localPort = 8080
-externalPort = 8080
+externalPort = 80
 
 [deployment]
 deploymentTarget = "autoscale"
-run = ["bash", "-c", "cd mood-tracker-api/out && API_PORT=8000 dotnet MoodTrackerApi.dll & until curl -sf http://localhost:8000/swagger > /dev/null 2>&1; do sleep 1; done && PORT=3000 node /home/runner/workspace/server.js"]
+run = ["bash", "-c", "cd mood-tracker-api/out && API_PORT=8000 dotnet MoodTrackerApi.dll & until curl -sf http://localhost:8000/swagger > /dev/null 2>&1; do sleep 1; done && PORT=8080 node /home/runner/workspace/server.js"]
 build = ["bash", "-c", "cd mood-tracker-api && dotnet publish -c Release -o out && cd ../mood-tracker-frontend && npm install && npm run build && cd .. && npm install --omit=dev"]
