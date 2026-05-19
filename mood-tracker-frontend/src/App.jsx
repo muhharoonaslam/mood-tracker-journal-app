@@ -145,9 +145,6 @@ export default function App() {
       <header className="app-header">
         <span className="app-header-title">My Journal</span>
         <div className="app-header-icons">
-          {user?.email && !isDesktop && (
-            <span className="app-header-email">{user.email}</span>
-          )}
           {!isDesktop && (
             <button type="button" className="app-logout-btn" onClick={logout}>
               Sign Out
