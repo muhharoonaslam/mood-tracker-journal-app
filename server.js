@@ -8,7 +8,7 @@ const PORT = process.env.PORT || 5000
 app.use(
   '/api',
   createProxyMiddleware({
-    target: 'http://localhost:8000',
+    target: 'http://localhost:5000',
     changeOrigin: true,
   })
 )
