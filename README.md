@@ -115,8 +115,6 @@ Not intended for public deployment. If needed, pass `DB_PATH` pointing to your S
 DB_PATH=/path/to/mood_tracker.db php -S 0.0.0.0:8080 summary.php
 ```
 
-Do not expose this page publicly — it has no authentication.
-
 ---
 
 ## Security Notes
