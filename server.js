@@ -20,6 +20,10 @@ app.use(
   })
 )
 
+app.get('/health', (_req, res) => {
+  res.json({ express: 'ok', port: PORT, apiTarget: 'http://localhost:8000' })
+})
+
 app.use(express.static(path.join(__dirname, 'mood-tracker-frontend/dist')))
 
 app.get('*', (_req, res) => {
