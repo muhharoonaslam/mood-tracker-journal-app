@@ -68,16 +68,13 @@ export default function TimelineEntry({ entry, index = 0, isActive, onClick }) {
         </div>
 
         {note && (
-          <>
-            <div className="card-note-area card-note-truncated">{note}</div>
-            <button
-              className="card-view-more"
-              onClick={handleViewMore}
-              style={{ color: moodColor }}
-            >
-              View more ›
-            </button>
-          </>
+          <button
+            className="card-view-more"
+            onClick={handleViewMore}
+            style={{ color: moodColor }}
+          >
+            View Log ›
+          </button>
         )}
       </article>
 
