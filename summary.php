@@ -7,7 +7,7 @@
  * Then open http://localhost:8080 in your browser.
  */
 
-$dbPath = __DIR__ . '/MoodTrackerApi/mood_tracker.db';
+$dbPath = getenv('DB_PATH') ?: __DIR__ . '/db/mood_tracker.db';
 
 if (!file_exists($dbPath)) {
     die('<p style="color:red;font-family:sans-serif;padding:2rem;">Database not found at: ' . htmlspecialchars($dbPath) . '<br>Run the .NET API at least once to initialise the database.</p>');

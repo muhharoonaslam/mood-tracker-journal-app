@@ -33,9 +33,11 @@ services:
       - ./summary.php:/var/www/summary.php
       - db-data:/var/www/db
     working_dir: /var/www
-    command: >
-      sh -c "ln -sf /var/www/db/mood_tracker.db /var/www/MoodTrackerApi/mood_tracker.db 2>/dev/null || true &&
-             php -S 0.0.0.0:8080 summary.php"
+    environment:
+      - DB_PATH=/var/www/db/mood_tracker.db
+    command: php -S 0.0.0.0:8080 summary.php
+    depends_on:
+      - api
 
 volumes:
   db-data:

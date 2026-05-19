@@ -21,6 +21,11 @@ export default function LoginForm({ onLogin, onSwitch, error }) {
     }
   }
 
+  function fillTestAccount() {
+    setEmail('test@example.com')
+    setPassword('password123')
+  }
+
   return (
     <div className="auth-page">
       <h1 className="auth-title">My Journal</h1>
@@ -29,6 +34,19 @@ export default function LoginForm({ onLogin, onSwitch, error }) {
 
       <div className="auth-card">
         <ErrorMessage message={error} />
+
+        <div style={{ marginBottom: '1rem', padding: '0.6rem 0.75rem', background: '#f5f0e8', border: '1px solid #c8b89a', borderRadius: '4px', fontSize: '0.8rem', color: '#6b5a45' }}>
+          <strong>Test account:</strong> test@example.com / password123{' '}
+          <span
+            onClick={fillTestAccount}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && fillTestAccount()}
+            style={{ cursor: 'pointer', textDecoration: 'underline', color: '#4a3728' }}
+          >
+            (fill in)
+          </span>
+        </div>
 
         <form onSubmit={handleSubmit} noValidate>
           <div className="auth-field">

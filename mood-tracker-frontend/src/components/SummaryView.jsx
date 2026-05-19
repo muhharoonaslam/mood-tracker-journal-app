@@ -1,6 +1,5 @@
 import React from 'react'
 import MoodCanvasFace from './MoodCanvasFace'
-import TallyMarks from './TallyMarks'
 
 const MOOD_COLORS = { Happy: '#E8913A', Neutral: '#7A8B69', Sad: '#6B8CAE' }
 
@@ -10,7 +9,7 @@ function formatLedgerDate(utcString) {
     return new Date(utcString).toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',
-      year: 'numeric',   // ← was '2-digit' → showed "May 18, 26"
+      year: 'numeric',
     })
   } catch {
     return utcString
@@ -36,7 +35,6 @@ export default function SummaryView({ entries }) {
 
   const topMood = Object.entries(moodCounts).sort((a, b) => b[1] - a[1])[0]
 
-  // Group all entries by day (YYYY-MM-DD) for the ledger, newest first
   const byDay = {}
   ;[...safeEntries]
     .sort((a, b) => new Date(b.timestampUtc) - new Date(a.timestampUtc))
@@ -55,47 +53,37 @@ export default function SummaryView({ entries }) {
       <p className="summary-month-label">{getMonthLabel()}</p>
       <div className="section-underline" style={{ marginBottom: 20 }} />
 
-      {/* Top stat */}
       {topMood && topMood[1] > 0 && (
         <div className="summary-stat-bar">
           <span className="summary-stat-label">Most felt this month</span>
-          <span
-            className="summary-stat-value"
-            style={{ color: MOOD_COLORS[topMood[0]] }}
-          >
+          <span className="summary-stat-value" style={{ color: MOOD_COLORS[topMood[0]] }}>
             {topMood[0]}
           </span>
           <span className="summary-stat-count">× {topMood[1]}</span>
         </div>
       )}
 
-      {/* Mood tally cards */}
       <div className="mood-tally-row">
         {['Happy', 'Neutral', 'Sad'].map((mood) => (
           <div
             className="tally-card"
             key={mood}
-            style={{
-              borderTopColor: MOOD_COLORS[mood],
-              borderTopWidth: 4,
-            }}
+            style={{ borderTopColor: MOOD_COLORS[mood], borderTopWidth: 4 }}
           >
             <MoodCanvasFace mood={mood} size={52} />
-            <div
-              className="tally-card-label"
-              style={{ color: MOOD_COLORS[mood], fontWeight: 700 }}
-            >
+            <div className="tally-card-label" style={{ color: MOOD_COLORS[mood], fontWeight: 700 }}>
               {mood}
             </div>
-            <div className="tally-marks">
-              <TallyMarks count={moodCounts[mood]} color={MOOD_COLORS[mood]} height={24} />
+            <div
+              className="tally-count"
+              style={{ fontSize: '2rem', fontWeight: 700, color: MOOD_COLORS[mood], lineHeight: 1.2 }}
+            >
+              {moodCounts[mood]}
             </div>
-            <div className="tally-count">{moodCounts[mood]}</div>
           </div>
         ))}
       </div>
 
-      {/* Daily Ledger — one row per day */}
       <h3 className="ledger-title">Daily Ledger</h3>
 
       {ledgerRows.length === 0 ? (
@@ -105,7 +93,7 @@ export default function SummaryView({ entries }) {
           <div className="ledger-header">
             <span>Date</span>
             <span>Mood</span>
-            <span>Tally</span>
+            <span>Count</span>
           </div>
           {ledgerRows.map(({ date, moods }) => {
             const freq = {}
@@ -125,9 +113,8 @@ export default function SummaryView({ entries }) {
                     </span>
                   ))}
                 </span>
-                <span className="ledger-tally">
-                  <TallyMarks count={moods.length} height={28} />
-                  <span className="ledger-tally-count">{moods.length}</span>
+                <span className="ledger-tally-count" style={{ fontWeight: 700 }}>
+                  {moods.length}
                 </span>
               </div>
             )

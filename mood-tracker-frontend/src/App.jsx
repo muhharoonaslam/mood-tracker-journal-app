@@ -111,7 +111,6 @@ export default function App() {
       <h2 className="section-title">Recent Entries</h2>
       <div className="section-underline" />
       {isDesktop ? (
-        /* Desktop: entries grid + right-column widgets */
         <div className="desktop-main-grid">
           <MoodTimeline
             entries={entries}
@@ -125,7 +124,6 @@ export default function App() {
           </div>
         </div>
       ) : (
-        /* Mobile: stacked */
         <>
           <MoodTimeline
             entries={entries}
@@ -163,7 +161,6 @@ export default function App() {
         />
       )}
 
-      {/* Log Mood modal — desktop only */}
       {isDesktop && showLogModal && (
         <div className="modal-backdrop" onClick={() => setShowLogModal(false)}>
           <div className="modal-sheet" onClick={(e) => e.stopPropagation()}>
@@ -178,7 +175,6 @@ export default function App() {
       )}
 
       <main className="app-content">
-        {/* Desktop always shows timeline or summary (form is in sidebar) */}
         {isDesktop ? (
           view === 'summary'
             ? <SummaryView entries={entries} />
@@ -199,7 +195,6 @@ export default function App() {
         )}
       </main>
 
-      {/* Mobile-only: FAB + bottom nav */}
       {!isDesktop && view === 'timeline' && (
         <button className="fab" aria-label="Log new mood" onClick={() => setView('log')}>
           +

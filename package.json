@@ -1,0 +1,19 @@
+{
+  "name": "mood-tracker-journal-app",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Paper & Ink — full-stack mood tracking journal. Monorepo containing a React frontend, ASP.NET Core 8 API, and PHP summary page.",
+  "workspaces": [
+    "mood-tracker-frontend"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=mood-tracker-frontend",
+    "build": "npm run build --workspace=mood-tracker-frontend",
+    "docker:up": "docker compose up --build",
+    "docker:down": "docker compose down",
+    "docker:rebuild": "docker compose down && docker compose build --no-cache && docker compose up"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

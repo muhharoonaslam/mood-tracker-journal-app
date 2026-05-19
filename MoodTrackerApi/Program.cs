@@ -47,6 +47,7 @@ builder.Services.AddCors(options =>
 // Controllers with ProblemDetails support
 builder.Services.AddControllers();
 builder.Services.AddProblemDetails();
+builder.Services.AddHostedService<MoodTrackerApi.Data.DatabaseSeeder>();
 
 // Swagger / OpenAPI
 builder.Services.AddEndpointsApiExplorer();
