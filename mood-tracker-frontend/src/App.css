@@ -722,6 +722,64 @@
   margin-bottom: 24px;
 }
 
+/* ---------- Log view — mobile compact ---------- */
+
+@media (max-width: 767px) {
+  .log-view {
+    padding: 12px 16px;
+    min-height: unset;
+  }
+
+  .log-back {
+    font-size: 14px;
+    margin-bottom: 10px;
+  }
+
+  .log-date-stamp {
+    font-size: 18px;
+    padding: 8px 16px;
+    margin-bottom: 14px;
+  }
+
+  .log-question {
+    font-size: 18px;
+    margin-bottom: 12px;
+  }
+
+  .mood-cards-row {
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .mood-card {
+    padding: 10px 8px;
+    min-width: 0;
+  }
+
+  .mood-card-label {
+    font-size: 12px;
+    margin-top: 4px;
+  }
+
+  .scribble-label {
+    font-size: 16px;
+    margin-bottom: 6px;
+  }
+
+  .ruled-textarea {
+    min-height: 84px;
+    font-size: 15px;
+    line-height: 28px;
+    padding: 8px;
+  }
+
+  .ink-it-btn {
+    font-size: 16px;
+    padding: 11px 32px;
+    margin-top: 14px;
+  }
+}
+
 .mood-cards-row {
   display: flex;
   gap: 12px;
