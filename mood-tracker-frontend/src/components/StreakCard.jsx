@@ -1,34 +1,29 @@
 import React from 'react'
 
-/**
- * Calculates the current streak (consecutive days ending today or yesterday).
- * @param {object[]} entries - array of mood entries with timestampUtc
- * @returns {number}
- */
+function localDateStr(d) {
+  const date = new Date(d)
+  const y = date.getFullYear()
+  const m = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${y}-${m}-${day}`
+}
+
 function calculateStreak(entries) {
   if (!entries || entries.length === 0) return 0
 
-  // Get unique dates (YYYY-MM-DD) in descending order
   const dates = Array.from(
     new Set(
       entries
         .filter((e) => e.timestampUtc)
-        .map((e) => {
-          const d = new Date(e.timestampUtc)
-          return d.toISOString().slice(0, 10)
-        })
+        .map((e) => localDateStr(e.timestampUtc))
     )
   ).sort((a, b) => (a > b ? -1 : 1))
 
   if (dates.length === 0) return 0
 
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
+  const todayStr = localDateStr(new Date())
+  const yesterdayStr = localDateStr(new Date(Date.now() - 86400000))
 
-  const todayStr = today.toISOString().slice(0, 10)
-  const yesterdayStr = new Date(today.getTime() - 86400000).toISOString().slice(0, 10)
-
-  // Streak must start from today or yesterday
   if (dates[0] !== todayStr && dates[0] !== yesterdayStr) return 0
 
   let streak = 1
@@ -53,10 +48,6 @@ const QUOTES = [
   '"The habit of reflection is the habit of growth."',
 ]
 
-/**
- * Terracotta streak card showing consecutive journaling days.
- * @param {{ entries: object[] }} props
- */
 export default function StreakCard({ entries }) {
   const streak = calculateStreak(entries)
   const quote = QUOTES[streak % QUOTES.length]

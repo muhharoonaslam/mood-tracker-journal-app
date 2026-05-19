@@ -421,10 +421,10 @@
   box-shadow: none;
 }
 
-/* Mood color accents — top border + shadow tint */
-.timeline-card.mood-happy  { border-top-color: #E8913A; box-shadow: 4px 4px 0px #E8913A; }
-.timeline-card.mood-neutral{ border-top-color: #7A8B69; box-shadow: 4px 4px 0px #7A8B69; }
-.timeline-card.mood-sad    { border-top-color: #6B8CAE; box-shadow: 4px 4px 0px #6B8CAE; }
+/* Mood color accents — top border + shadow tint + background */
+.timeline-card.mood-happy  { border-top-color: #E8913A; box-shadow: 4px 4px 0px #E8913A; background: #FFF8F0; }
+.timeline-card.mood-neutral{ border-top-color: #7A8B69; box-shadow: 4px 4px 0px #7A8B69; background: #F3F6EF; }
+.timeline-card.mood-sad    { border-top-color: #6B8CAE; box-shadow: 4px 4px 0px #6B8CAE; background: #EFF3F8; }
 
 /* Click pulse animation */
 .timeline-card.entry-pulse {
@@ -466,6 +466,15 @@
   margin: 8px 0;
 }
 
+.card-mood-label {
+  font-family: var(--font-sketch);
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+}
+
 .card-note-area {
   background-image: repeating-linear-gradient(
     transparent 0px,
@@ -481,6 +490,119 @@
   line-height: 28px;
   color: var(--ink);
   word-break: break-word;
+}
+
+.card-note-truncated {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: unset;
+}
+
+.card-view-more {
+  background: none;
+  border: none;
+  padding: 4px 0 0;
+  font-family: var(--font-hand);
+  font-size: 13px;
+  font-style: italic;
+  cursor: pointer;
+  display: block;
+  width: 100%;
+  text-align: right;
+}
+
+/* ---------- Note Modal ---------- */
+
+.note-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.note-modal {
+  background: var(--aged-paper);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  max-width: 480px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.note-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 2px solid var(--ink);
+}
+
+.note-modal-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.note-modal-mood {
+  font-family: var(--font-sketch);
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.note-modal-date {
+  font-family: var(--font-hand);
+  font-size: 13px;
+  color: var(--graphite);
+  letter-spacing: 0.06em;
+}
+
+.note-modal-close {
+  background: none;
+  border: 2px solid var(--ink);
+  border-radius: var(--radius);
+  width: 32px;
+  height: 32px;
+  font-size: 20px;
+  cursor: pointer;
+  color: var(--ink);
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: box-shadow 0.1s, transform 0.1s;
+}
+
+.note-modal-close:active {
+  transform: translate(1px, 1px);
+  box-shadow: none;
+}
+
+.note-modal-body {
+  padding: 16px;
+  font-family: var(--font-hand);
+  font-size: 16px;
+  line-height: 28px;
+  color: var(--ink);
+  white-space: pre-wrap;
+  word-break: break-word;
+  background-image: repeating-linear-gradient(
+    transparent 0px,
+    transparent 27px,
+    rgba(122, 117, 103, 0.3) 27px,
+    rgba(122, 117, 103, 0.3) 28px
+  );
+  background-size: 100% 28px;
+  min-height: 120px;
 }
 
 .timeline-empty {
