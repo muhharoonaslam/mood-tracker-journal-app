@@ -30,16 +30,17 @@ app.get('/health', async (_req, res) => {
     check('http://localhost:8000/api/auth/login'),
   ])
   const fs = require('fs')
+  const fs = require('fs')
   let dotnetLog = ''
-  try { dotnetLog = fs.readFileSync('/tmp/dotnet.log', 'utf8').slice(-2000) } catch (_) {}
+  try { dotnetLog = fs.readFileSync('/tmp/dotnet.log', 'utf8').slice(-2000) } catch (e) { dotnetLog = 'log read error: ' + e.message }
+  const outDir = '/home/runner/workspace/mood-tracker-api/out'
+  let outFiles = []
+  try { outFiles = fs.readdirSync(outDir) } catch (e) { outFiles = ['read error: ' + e.message] }
   res.json({
     express: 'ok',
     port: PORT,
-    env_PORT: process.env.PORT,
     api_swagger: swagger,
-    api_login_get: login,
-    cwd: process.cwd(),
-    dist_exists: fs.existsSync(require('path').join(__dirname, 'mood-tracker-frontend/dist/index.html')),
+    out_dir_files: outFiles,
     dotnet_log: dotnetLog,
   })
 })
