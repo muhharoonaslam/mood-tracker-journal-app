@@ -20,8 +20,15 @@ app.use(
   })
 )
 
-app.get('/health', (_req, res) => {
-  res.json({ express: 'ok', port: PORT, apiTarget: 'http://localhost:8000' })
+app.get('/health', async (_req, res) => {
+  try {
+    const http = require('http')
+    await new Promise((resolve, reject) => {
+      http.get('http://localhost:8000/swagger', (r) => resolve(r.statusCode)).on('error', reject)
+    }).then(status => res.json({ express: 'ok', port: PORT, dotnet: status }))
+  } catch (e) {
+    res.json({ express: 'ok', port: PORT, dotnet: 'unreachable', error: e.message })
+  }
 })
 
 app.use(express.static(path.join(__dirname, 'mood-tracker-frontend/dist')))
