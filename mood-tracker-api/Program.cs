@@ -82,8 +82,7 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-var apiPort = Environment.GetEnvironmentVariable("API_PORT") ?? "8000";
-builder.WebHost.UseUrls($"http://0.0.0.0:{apiPort}");
+builder.WebHost.UseUrls("http://0.0.0.0:8000");
 
 var app = builder.Build();
 

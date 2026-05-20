@@ -29,6 +29,9 @@ app.get('/health', async (_req, res) => {
     check('http://localhost:8000/swagger'),
     check('http://localhost:8000/api/auth/login'),
   ])
+  const fs = require('fs')
+  let dotnetLog = ''
+  try { dotnetLog = fs.readFileSync('/tmp/dotnet.log', 'utf8').slice(-2000) } catch (_) {}
   res.json({
     express: 'ok',
     port: PORT,
@@ -36,7 +39,8 @@ app.get('/health', async (_req, res) => {
     api_swagger: swagger,
     api_login_get: login,
     cwd: process.cwd(),
-    dist_exists: require('fs').existsSync(require('path').join(__dirname, 'mood-tracker-frontend/dist/index.html')),
+    dist_exists: fs.existsSync(require('path').join(__dirname, 'mood-tracker-frontend/dist/index.html')),
+    dotnet_log: dotnetLog,
   })
 })
 

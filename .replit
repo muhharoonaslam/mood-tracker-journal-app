@@ -51,5 +51,5 @@ externalPort = 80
 
 [deployment]
 deploymentTarget = "autoscale"
-run = ["bash", "-c", "cd mood-tracker-api/out && API_PORT=8000 dotnet MoodTrackerApi.dll & PORT=8080 node /home/runner/workspace/server.js"]
+run = ["bash", "-c", "cd mood-tracker-api/out && ASPNETCORE_URLS=http://0.0.0.0:8000 dotnet MoodTrackerApi.dll > /tmp/dotnet.log 2>&1 & PORT=8080 node /home/runner/workspace/server.js"]
 build = ["bash", "-c", "cd mood-tracker-api && dotnet publish -c Release -o out && cd ../mood-tracker-frontend && npm install && npm run build && cd .. && npm install --omit=dev"]
