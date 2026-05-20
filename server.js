@@ -21,14 +21,23 @@ app.use(
 )
 
 app.get('/health', async (_req, res) => {
-  try {
-    const http = require('http')
-    await new Promise((resolve, reject) => {
-      http.get('http://localhost:8000/swagger', (r) => resolve(r.statusCode)).on('error', reject)
-    }).then(status => res.json({ express: 'ok', port: PORT, dotnet: status }))
-  } catch (e) {
-    res.json({ express: 'ok', port: PORT, dotnet: 'unreachable', error: e.message })
-  }
+  const http = require('http')
+  const check = (url) => new Promise((resolve) => {
+    http.get(url, (r) => resolve({ status: r.statusCode })).on('error', (e) => resolve({ error: e.message }))
+  })
+  const [swagger, login] = await Promise.all([
+    check('http://localhost:8000/swagger'),
+    check('http://localhost:8000/api/auth/login'),
+  ])
+  res.json({
+    express: 'ok',
+    port: PORT,
+    env_PORT: process.env.PORT,
+    api_swagger: swagger,
+    api_login_get: login,
+    cwd: process.cwd(),
+    dist_exists: require('fs').existsSync(require('path').join(__dirname, 'mood-tracker-frontend/dist/index.html')),
+  })
 })
 
 app.use(express.static(path.join(__dirname, 'mood-tracker-frontend/dist')))
