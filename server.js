@@ -7,10 +7,10 @@ const app = express()
 const PORT = parseInt(process.env.PORT || '5000', 10)
 
 app.use(
-  '/api',
   createProxyMiddleware({
     target: 'http://localhost:8000',
     changeOrigin: true,
+    pathFilter: '/api',
     on: {
       error: (err, _req, res) => {
         res.writeHead(502, { 'Content-Type': 'application/json' })
